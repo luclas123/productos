@@ -8,6 +8,7 @@ export default class App extends Component{
   constructor(props){
     super(props);
     this.state = {
+      categoria_id: "",
       categorias: [],
       productos: []
     }
@@ -15,9 +16,11 @@ export default class App extends Component{
   
 
   buscarCategorias(){
-    const url = "https://productos.ctpoba.edu.ar/api/categorias"
+    // const url = "https://productos.ctpoba.edu.ar/api/categorias"
+    const url = "http://10.0.4.103:3000/api/categorias"
     axios.get(url)
     .then((res) => {
+      console.log(res.data.categorias)
       this.setState({categorias : res.data.categorias})
     })
     .catch((error)=>{
@@ -25,10 +28,14 @@ export default class App extends Component{
     })
   }
 
-  buscarProducto(){
-    const url = "https://productos.ctpoba.edu.ar/api/productos"
-    axios.get(url)
+  buscarProducto(categoria_id){
+    const url = "http://10.0.4.103:3000/api/productos"
+    const config = {
+      params:{categoria_id}
+    }
+    axios.get(url, config)
     .then((res)=>{
+      console.log(res.data.productos);
       this.setState({productos : res.data.productos})
     })
     .catch((error)=>{
@@ -57,11 +64,12 @@ export default class App extends Component{
             </option>
             ))}
       </select>
+      <h3>{this.state.categoria_id}</h3>
 
       <input
       type='button'
-      value='buscar'
-      onClick={()=> this.buscarProducto()}></input>
+      value='buscar Producto'
+      onClick={()=> this.buscarProducto(this.state.categoria_id)}></input>
 
      {this.state.productos.map((producto, i)=>(
       <div key={producto.id} className='listaProducto'>
@@ -69,6 +77,7 @@ export default class App extends Component{
         {producto.descripcion} <br />
         {producto.precio} <br />
         {producto.categoria} <br />
+        <img src={producto.imagen_url} alt=''></img>
         
 
       </div>
